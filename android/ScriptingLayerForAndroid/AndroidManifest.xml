@@ -2,7 +2,7 @@
 <manifest
   xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.googlecode.android_scripting"
-  android:installLocation="auto" android:versionCode="401" android:versionName="5x">
+  android:versionCode="401" android:versionName="5x-tf101" android:installLocation="auto">
     <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
   <application
     android:icon="@drawable/sl4a_logo_48"
