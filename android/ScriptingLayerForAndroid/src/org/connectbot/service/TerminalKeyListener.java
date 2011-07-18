@@ -19,6 +19,7 @@ package org.connectbot.service;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.text.ClipboardManager;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -30,12 +31,12 @@ import com.googlecode.android_scripting.Log;
 import de.mud.terminal.VDUBuffer;
 import de.mud.terminal.vt320;
 
+import java.io.IOException;
+
 import org.connectbot.TerminalView;
 import org.connectbot.transport.AbsTransport;
 import org.connectbot.util.PreferenceConstants;
 import org.connectbot.util.SelectionArea;
-
-import java.io.IOException;
 
 /**
  * @author kenny
@@ -90,6 +91,7 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 
     hardKeyboard =
         (manager.getResources().getConfiguration().keyboard == Configuration.KEYBOARD_QWERTY);
+    hardKeyboard = hardKeyboard && !Build.MODEL.equals("Transformer TF101");
 
     updateKeymode();
   }
