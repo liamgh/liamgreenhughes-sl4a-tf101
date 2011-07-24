@@ -596,14 +596,17 @@ public class ConsoleActivity extends Activity {
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
-    setVolumeControlStream(AudioManager.STREAM_NOTIFICATION);
-    TerminalBridge bridge = ((TerminalView) findCurrentView(R.id.console_flip)).bridge;
-    boolean sessionOpen = bridge.isSessionOpen();
-    menu.findItem(R.id.terminal_menu_resize).setEnabled(sessionOpen);
-    if (bridge.getProcess() instanceof ScriptProcess) {
-      menu.findItem(R.id.terminal_menu_exit_and_edit).setEnabled(true);
+    // LGH - Added if clause here to make activity work with Holo theme and action bar
+    if (findCurrentView(R.id.console_flip) != null) {
+      setVolumeControlStream(AudioManager.STREAM_NOTIFICATION);
+      TerminalBridge bridge = ((TerminalView) findCurrentView(R.id.console_flip)).bridge;
+      boolean sessionOpen = bridge.isSessionOpen();
+      menu.findItem(R.id.terminal_menu_resize).setEnabled(sessionOpen);
+      if (bridge.getProcess() instanceof ScriptProcess) {
+        menu.findItem(R.id.terminal_menu_exit_and_edit).setEnabled(true);
+      }
+      bridge.onPrepareOptionsMenu(menu);
     }
-    bridge.onPrepareOptionsMenu(menu);
     return true;
   }
 
