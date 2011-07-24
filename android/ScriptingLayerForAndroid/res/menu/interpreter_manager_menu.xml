@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+   <item android:id="@+id/im_add"
+          android:icon="@android:drawable/ic_menu_add"
+          android:title="Add"
+          android:showAsAction="always|withText">
+   <menu>
+   </menu>
+   </item>
+   <item android:id="@+id/im_start_server"
+          android:icon="@android:drawable/ic_media_play"
+          android:title="Start Server"
+          android:showAsAction="always|withText">
+      <menu>
+       <item android:id="@+id/im_start_server_public"
+          android:title="Public"/> 
+       <item android:id="@+id/im_start_server_private"
+          android:title="Private"/>         
+      </menu>
+   </item>
+   <item android:id="@+id/im_preferences"
+          android:icon="@android:drawable/ic_menu_preferences"
+          android:title="Preferences"
+          android:showAsAction="always"/>
+   <item android:id="@+id/im_help"
+          android:icon="@android:drawable/ic_menu_help"
+          android:title="Help"
+          android:showAsAction="always"/>
+
+</menu>

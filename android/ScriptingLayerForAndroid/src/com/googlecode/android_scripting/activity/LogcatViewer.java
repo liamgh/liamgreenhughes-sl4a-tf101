@@ -16,6 +16,7 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -99,6 +100,9 @@ public class LogcatViewer extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     CustomizeWindow.requestCustomTitle(this, "Logcat", R.layout.logcat_viewer);
+    ActionBar actionBar = getActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
+
     mLogcatMessages = new LinkedList<String>();
     mOldLastPosition = 0;
     mAdapter = new LogcatViewerAdapter();
@@ -110,16 +114,20 @@ public class LogcatViewer extends ListActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    menu.add(Menu.NONE, MenuId.PREFERENCES.getId(), Menu.NONE, "Preferences").setIcon(
-        android.R.drawable.ic_menu_preferences);
+
     menu.add(Menu.NONE, MenuId.JUMP_TO_BOTTOM.getId(), Menu.NONE, "Jump to Bottom").setIcon(
-        android.R.drawable.ic_menu_revert);
-    menu.add(Menu.NONE, MenuId.HELP.getId(), Menu.NONE, "Help").setIcon(
-        android.R.drawable.ic_menu_help);
-    menu.add(Menu.NONE, MenuId.SHARE.getId(), Menu.NONE, "Share").setIcon(
-        android.R.drawable.ic_menu_share);
+        R.drawable.ic_menu_goto).setShowAsAction(
+        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     menu.add(Menu.NONE, MenuId.COPY.getId(), Menu.NONE, "Copy").setIcon(
-        android.R.drawable.ic_menu_edit);
+        android.R.drawable.ic_menu_edit).setShowAsAction(
+        MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    menu.add(Menu.NONE, MenuId.PREFERENCES.getId(), Menu.NONE, "Preferences").setIcon(
+        android.R.drawable.ic_menu_preferences).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    menu.add(Menu.NONE, MenuId.HELP.getId(), Menu.NONE, "Help").setIcon(
+        android.R.drawable.ic_menu_help).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    menu.add(Menu.NONE, MenuId.SHARE.getId(), Menu.NONE, "Share").setIcon(
+        android.R.drawable.ic_menu_share).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -134,7 +142,12 @@ public class LogcatViewer extends ListActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
-    if (itemId == MenuId.HELP.getId()) {
+    // action bar back
+    if (itemId == android.R.id.home) {
+      Intent intent = new Intent(this, ScriptManager.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+    } else if (itemId == MenuId.HELP.getId()) {
       Help.show(this);
     } else if (itemId == MenuId.JUMP_TO_BOTTOM.getId()) {
       getListView().setSelection(mLogcatMessages.size() - 1);

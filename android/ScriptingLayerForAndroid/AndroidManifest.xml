@@ -4,6 +4,7 @@
   package="com.googlecode.android_scripting"
   android:versionCode="401" android:versionName="5x-tf101" android:installLocation="auto">
     <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+  <uses-sdk android:minSdkVersion="11" />
   <application
     android:icon="@drawable/sl4a_logo_48"
     android:label="@string/application_title"
@@ -12,7 +13,8 @@
       android:name=".activity.ScriptManager"
       android:configChanges="keyboardHidden|orientation"
       android:windowSoftInputMode="adjustResize"
-      android:launchMode="singleTop">
+      android:launchMode="singleTop"
+      android:theme="@android:style/Theme.Holo.Light">
       <intent-filter>
         <action
           android:name="android.intent.action.MAIN" />
@@ -30,7 +32,8 @@
     <activity
       android:name=".activity.ScriptPicker"
       android:configChanges="keyboardHidden|orientation"
-      android:label="Scripts">
+      android:label="Scripts"
+      android:theme="@android:style/Theme.Holo.Light">
       <intent-filter>
         <action
           android:name="android.intent.action.CREATE_SHORTCUT" />
@@ -77,20 +80,21 @@
     </receiver>
     <activity
       android:name=".activity.Preferences"
-      android:theme="@android:style/Theme.NoTitleBar" />
+      android:theme="@android:style/Theme.Holo.Light" />
     <activity
       android:name="org.connectbot.ConsoleActivity"
-      android:theme="@android:style/Theme.NoTitleBar"
       android:configChanges="keyboardHidden|orientation"
       android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
       android:finishOnTaskLaunch="true"
-      android:launchMode="singleTask">
+      android:launchMode="singleTask"
+      android:theme="@android:style/Theme.Holo">
     </activity>
     <activity
       android:name=".activity.ScriptEditor"
-      android:theme="@android:style/Theme.NoTitleBar"
       android:configChanges="keyboardHidden|orientation"
-      android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
+      android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
+      
+      android:theme="@android:style/Theme.Holo.Light">
       <intent-filter>
         <action
           android:name="com.googlecode.android_scripting.action.EDIT_SCRIPT" />
@@ -102,7 +106,8 @@
       android:name=".activity.ApiBrowser"
       android:configChanges="keyboardHidden|orientation"
       android:launchMode="singleTop"
-      android:windowSoftInputMode="adjustResize">
+      android:windowSoftInputMode="adjustResize"
+      android:theme="@android:style/Theme.Holo.Light">
       <intent-filter>
         <action
           android:name="android.intent.action.SEARCH" />
@@ -113,15 +118,17 @@
     </activity>
     <activity
       android:name=".activity.ApiPrompt"
-      android:theme="@android:style/Theme.NoTitleBar"
-      android:configChanges="keyboardHidden|orientation" />
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo" />
     <activity
       android:name=".activity.TriggerManager"
       android:launchMode="singleTask"
-      android:configChanges="keyboardHidden|orientation" />
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo.Light" />
     <activity
       android:name=".activity.BluetoothDeviceList"
-      android:configChanges="keyboardHidden|orientation" />
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo.Light" />
     <activity
       android:name=".activity.ScriptingLayerServiceLauncher"
       android:taskAffinity=""
@@ -139,10 +146,12 @@
       android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     <activity
       android:name="org.connectbot.HelpActivity"
-      android:configChanges="keyboardHidden|orientation" />
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo.Light" />
     <activity
       android:name="org.connectbot.HelpTopicActivity"
-      android:configChanges="keyboardHidden|orientation" />
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo.Light" />
     <service
       android:name=".activity.ScriptingLayerService" />
     <service
@@ -150,16 +159,19 @@
     <activity
       android:name=".activity.InterpreterManager"
       android:launchMode="singleTask"
-      android:configChanges="keyboardHidden|orientation" />
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo.Light" />
     <activity
       android:name=".activity.LogcatViewer"
       android:launchMode="singleTask"
-      android:configChanges="keyboardHidden|orientation" />
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo" />
     <activity
       android:name=".activity.ScriptsLiveFolder"
       android:label="Scripts"
       android:icon="@drawable/live_folder"
-      android:configChanges="keyboardHidden|orientation">
+      android:configChanges="keyboardHidden|orientation"
+      android:theme="@android:style/Theme.Holo.Light">
       <intent-filter>
         <action
           android:name="android.intent.action.CREATE_LIVE_FOLDER" />
@@ -178,7 +190,8 @@
     <activity
       android:name=".activity.ScriptProcessMonitor"
       android:launchMode="singleTask"
-      android:finishOnTaskLaunch="true" />
+      android:finishOnTaskLaunch="true"
+      android:theme="@android:style/Theme.Holo" />
     <activity
       android:configChanges="keyboardHidden|orientation"
       android:name="org.connectbot.util.ColorsActivity"
