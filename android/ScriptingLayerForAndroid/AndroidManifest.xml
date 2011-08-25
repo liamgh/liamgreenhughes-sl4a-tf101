@@ -80,7 +80,7 @@
     </receiver>
     <activity
       android:name=".activity.Preferences"
-      android:theme="@android:style/Theme.Holo.Light" />
+      android:theme="@android:style/Theme.Holo" />
     <activity
       android:name="org.connectbot.ConsoleActivity"
       android:configChanges="keyboardHidden|orientation"

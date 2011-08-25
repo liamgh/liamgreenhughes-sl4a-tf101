@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header android:fragment="com.googlecode.android_scripting.activity.Preferences$PreferencesGeneral"
+            android:title="General"
+            android:summary="Script Manager, Script Editor, Trigger and general settings." />
+
+    <header android:fragment="com.googlecode.android_scripting.activity.Preferences$PreferencesTerminal"
+            android:title="Terminal"
+            android:summary="Settings for the embedded terminal." />
+
+</preference-headers>
