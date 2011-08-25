@@ -65,7 +65,7 @@
   <string
     name="dialog_title_initialcommand_preference">Initial Command</string>
   <string
-    name="default_value_fontsize_preference">10</string>
+    name="default_value_fontsize_preference">20</string>
   <string
     name="default_value_color_preference">1</string>
   <string

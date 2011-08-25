@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
-  <PreferenceCategory
-    android:title="General">
-    <CheckBoxPreference
-      android:key="usagetracking"
-      android:title="Usage tracking"
-      android:summary="Allow anonymous usage tracking."
-      android:defaultValue="false" />
-  </PreferenceCategory>
-  <PreferenceCategory
-    android:title="Script Manager">
-    <CheckBoxPreference
-      android:key="show_all_files"
-      android:title="Show all files"
-      android:defaultValue="false" />
-    <CheckBoxPreference android:defaultValue="false" android:key="use_quick_menu" android:title="Use QuickActions Menu"></CheckBoxPreference>
-  </PreferenceCategory>
-  <PreferenceCategory
-    android:title="Script Editor">
-    <ListPreference
-      android:key="editor_fontsize"
-      android:defaultValue="@string/default_value_fontsize_preference"
-      android:title="@string/title_fontsize_preference"
-      android:summary="@string/summary_fontsize_preference"
-      android:entries="@array/entries_fontsize_preference"
-      android:entryValues="@array/entryvalues_fontsize_preference"
-      android:dialogTitle="@string/dialog_title_fontsize_preference" />
-  <CheckBoxPreference android:title="@string/help_force_browser" android:key="helpForceBrowser" android:defaultValue="true" android:summary="Force API Help to use default Android Browser"></CheckBoxPreference>
-</PreferenceCategory>
-  <PreferenceCategory
-    android:title="Terminal">
     <EditTextPreference
       android:key="scrollback"
       android:title="@string/pref_scrollback_title"
@@ -98,7 +68,6 @@
       android:title="@string/pref_hidekeyboard_title"
       android:summary="@string/pref_hidekeyboard_summary"
       android:defaultValue="false" />
-  </PreferenceCategory>
   <PreferenceCategory
     android:title="Terminal bell">
     <CheckBoxPreference
@@ -113,11 +82,4 @@
       android:title="@string/pref_bell_vibrate_title"
       android:defaultValue="true" />
   </PreferenceCategory>
-  <PreferenceCategory
-	  android:title="Trigger Behaviour">
-	  <CheckBoxPreference 
-	    android:key="hideServiceNotifications"
-		android:title="@string/pref_hide_notifications" 
-		android:defaultValue="false" />
-	</PreferenceCategory>
 </PreferenceScreen>
