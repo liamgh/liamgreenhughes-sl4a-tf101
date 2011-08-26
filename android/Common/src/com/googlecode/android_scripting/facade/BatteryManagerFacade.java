@@ -14,6 +14,12 @@
  * the License.
  */
 
+/**
+ * Extended by Liam Green-Hughes to report on Asus EEE PC dock battery
+ * Thanks to Artiom Chilaru for sharing code (https://github.com/artiomchi/Dual-Battery-Widget)
+ * for the Dual Battery Widget which has made these extra functions possible. 
+ */
+
 package com.googlecode.android_scripting.facade;
 
 import android.app.Service;
@@ -61,6 +67,10 @@ public class BatteryManagerFacade extends RpcReceiver {
   private volatile Integer mBatteryTemperature = null;
   private volatile String mBatteryTechnology = null;
 
+  // Extra fields for Asus EEE Pad Transformer dock battery
+  private volatile Integer mDockStatus = null;
+  private volatile Integer mDockLevel = null;
+
   public BatteryManagerFacade(FacadeManager manager) {
     super(manager);
     mService = manager.getService();
@@ -92,6 +102,11 @@ public class BatteryManagerFacade extends RpcReceiver {
         mBatteryTemperature =
             intent.getIntExtra(getBatteryManagerFieldValue("EXTRA_TEMPERATURE"), -1);
         mBatteryTechnology = intent.getStringExtra(getBatteryManagerFieldValue("EXTRA_TECHNOLOGY"));
+        if (intent.getExtras().containsKey("dock_level")) {
+          Log.d("SL4A: DOCK FOUND!!!!!");
+          mDockStatus = intent.getIntExtra("dock_status", 0);
+          mDockLevel = intent.getIntExtra("dock_level", -1);
+        }
       }
       Bundle data = new Bundle();
       data.putInt("status", mBatteryStatus);
@@ -214,6 +229,18 @@ public class BatteryManagerFacade extends RpcReceiver {
   @RpcMinSdk(5)
   public String batteryGetTechnology() {
     return mBatteryTechnology;
+  }
+
+  @Rpc(description = "Returns the status of the keyboard dock battery  - Asus EEE Pad Transformer only:"
+      + "\n0 - unknown \n1 - undocked \n2 - charging;" + "\n3 - docked;" + "\n4 - discharging;")
+  public Integer batteryGetDockStatus() {
+    return mDockStatus;
+  }
+
+  @Rpc(description = "Returns the most recently received keyboard battery level (percentage) - Asus EEE Pad Transformer only.")
+  @RpcMinSdk(5)
+  public Integer batteryGetDockLevel() {
+    return mDockLevel;
   }
 
 }
