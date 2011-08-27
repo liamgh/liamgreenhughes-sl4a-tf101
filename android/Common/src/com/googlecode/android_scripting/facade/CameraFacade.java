@@ -120,7 +120,7 @@ public class CameraFacade extends RpcReceiver {
     final BooleanResult autoFocusResult = new BooleanResult();
     final BooleanResult takePictureResult = new BooleanResult();
     // use default camera if the cameraId specified does not exist
-    if (cameraId >= Camera.getNumberOfCameras()) {
+    if (cameraId < 0 || cameraId >= Camera.getNumberOfCameras()) {
       cameraId = 0;
       Log.d("CameraId requested does not exist. Using default camera.");
     }
