@@ -16,15 +16,18 @@
 
 package com.googlecode.android_scripting.facade;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
@@ -44,7 +47,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -54,7 +56,7 @@ import java.util.concurrent.CountDownLatch;
 public class CameraFacade extends RpcReceiver {
 
   private final Service mService;
-  private final Parameters mParameters;
+  private final Parameters[] mParameters;
 
   private class BooleanResult {
     boolean mmResult = false;
@@ -63,33 +65,74 @@ public class CameraFacade extends RpcReceiver {
   public CameraFacade(FacadeManager manager) {
     super(manager);
     mService = manager.getService();
-    Camera camera = Camera.open();
-    try {
-      mParameters = camera.getParameters();
-    } finally {
-      camera.release();
+    mParameters = new Parameters[Camera.getNumberOfCameras()];
+    for (int cameraId = 0; cameraId < Camera.getNumberOfCameras(); cameraId++) {
+      Camera camera = Camera.open(cameraId);
+      try {
+        mParameters[cameraId] = camera.getParameters();
+      } finally {
+        camera.release();
+      }
     }
+  }
+
+  /**
+   * Makes the camera preview image show in the same orientation as the display Code from:
+   * http://developer.android.com/reference/android/hardware/Camera.html
+   */
+  public static void setCameraDisplayOrientation(Activity activity, int cameraId,
+      android.hardware.Camera camera) {
+    android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+    android.hardware.Camera.getCameraInfo(cameraId, info);
+    int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+    int degrees = 0;
+    switch (rotation) {
+    case Surface.ROTATION_0:
+      degrees = 0;
+      break;
+    case Surface.ROTATION_90:
+      degrees = 90;
+      break;
+    case Surface.ROTATION_180:
+      degrees = 180;
+      break;
+    case Surface.ROTATION_270:
+      degrees = 270;
+      break;
+    }
+
+    int result;
+    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+      result = (info.orientation + degrees) % 360;
+      result = (360 - result) % 360; // compensate the mirror
+    } else { // back-facing
+      result = (info.orientation - degrees + 360) % 360;
+    }
+    Log.d(String.format("Rotating camera display orientation by %d degrees", result));
+    camera.setDisplayOrientation(result);
   }
 
   @Rpc(description = "Take a picture and save it to the specified path.", returns = "A map of Booleans autoFocus and takePicture where True indicates success.")
   public Bundle cameraCapturePicture(@RpcParameter(name = "targetPath") final String targetPath,
-      @RpcParameter(name = "useAutoFocus") @RpcDefault("true") Boolean useAutoFocus)
+      @RpcParameter(name = "useAutoFocus") @RpcDefault("true") Boolean useAutoFocus,
+      @RpcParameter(name = "cameraId") @RpcDefault("0") Integer cameraId)
       throws InterruptedException {
     final BooleanResult autoFocusResult = new BooleanResult();
     final BooleanResult takePictureResult = new BooleanResult();
-
-    Camera camera = Camera.open();
-    camera.setParameters(mParameters);
-
-    try {
-      Method method = camera.getClass().getMethod("setDisplayOrientation", int.class);
-      method.invoke(camera, 90);
-    } catch (Exception e) {
-      Log.e(e);
+    // use default camera if the cameraId specified does not exist
+    if (cameraId >= Camera.getNumberOfCameras()) {
+      cameraId = 0;
+      Log.d("CameraId requested does not exist. Using default camera.");
     }
+    CameraInfo info = new android.hardware.Camera.CameraInfo();
+    Camera camera = Camera.open(cameraId);
+    android.hardware.Camera.getCameraInfo(cameraId, info);
+    camera.setParameters(mParameters[cameraId]);
 
     try {
       FutureActivityTask<SurfaceHolder> previewTask = setPreviewDisplay(camera);
+      // Change orientation of preview picture to match display
+      setCameraDisplayOrientation(previewTask.getActivity(), cameraId, camera);
       camera.startPreview();
       if (useAutoFocus) {
         autoFocus(autoFocusResult, camera);
