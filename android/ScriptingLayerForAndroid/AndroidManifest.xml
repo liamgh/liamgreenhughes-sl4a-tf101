@@ -256,4 +256,6 @@
     android:name="android.permission.READ_CONTACTS" />
   <uses-sdk
     android:targetSdkVersion="4" android:minSdkVersion="3"/>
+  <!-- Google TV compatibility -->
+  <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
 </manifest>
