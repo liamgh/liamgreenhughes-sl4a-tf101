@@ -16,6 +16,7 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -151,6 +152,7 @@ public class ScriptManager extends ListActivity {
 
   @SuppressWarnings("serial")
   private void updateAndFilterScriptList(final String query) {
+    Log.d("SL4A: updateAndFilterScriptList query \"" + query + "\"");
     List<File> scripts;
     if (mPreferences.getBoolean("show_all_files", false)) {
       scripts = ScriptStorageAdapter.listAllScripts(mCurrentDir);
@@ -166,10 +168,17 @@ public class ScriptManager extends ListActivity {
 
     synchronized (mQuery) {
       if (!mQuery.equals(query)) {
+        ActionBar actionBar = getActionBar();
         if (query == null || query.equals(EMPTY)) {
-          ((TextView) findViewById(R.id.left_text)).setText("Scripts");
+          // clear query
+          actionBar.setDisplayHomeAsUpEnabled(false);
+          // Doesn't work on EEE Pad
+          // ((TextView) findViewById(R.id.left_text)).setText("Scripts");
         } else {
-          ((TextView) findViewById(R.id.left_text)).setText(query);
+          // do query
+          actionBar.setDisplayHomeAsUpEnabled(true);
+          // Doesn't work on EEE Pad
+          // ((TextView) findViewById(R.id.left_text)).setText(query);
         }
         mQuery = query;
       }
@@ -364,6 +373,10 @@ public class ScriptManager extends ListActivity {
       mAdapter.notifyDataSetChanged();
     } else if (itemId == R.id.sm_search) {
       onSearchRequested();
+    } else if (itemId == android.R.id.home) {
+      // action bar back - clear search
+      updateAndFilterScriptList(EMPTY);
+      mAdapter.notifyDataSetChanged();
     }
     return true;
   }
