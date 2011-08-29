@@ -22,6 +22,7 @@
 
 package org.connectbot;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -68,6 +69,7 @@ import com.googlecode.android_scripting.Constants;
 import com.googlecode.android_scripting.Log;
 import com.googlecode.android_scripting.R;
 import com.googlecode.android_scripting.ScriptProcess;
+import com.googlecode.android_scripting.Version;
 import com.googlecode.android_scripting.activity.Preferences;
 import com.googlecode.android_scripting.activity.ScriptingLayerService;
 
@@ -596,15 +598,14 @@ public class ConsoleActivity extends Activity {
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
+    setVolumeControlStream(AudioManager.STREAM_NOTIFICATION);
     // LGH - Added if clause here to make activity work with Holo theme and action bar
     if (findCurrentView(R.id.console_flip) != null) {
-      setVolumeControlStream(AudioManager.STREAM_NOTIFICATION);
       TerminalBridge bridge = ((TerminalView) findCurrentView(R.id.console_flip)).bridge;
       boolean sessionOpen = bridge.isSessionOpen();
       menu.findItem(R.id.terminal_menu_resize).setEnabled(sessionOpen);
-      if (bridge.getProcess() instanceof ScriptProcess) {
-        menu.findItem(R.id.terminal_menu_exit_and_edit).setEnabled(true);
-      }
+      // liam.greenhughes - removed section here about enabling exit and edit
+      // button as now replaced with a permanent exit button handled by onOptionsItemSelected
       bridge.onPrepareOptionsMenu(menu);
     }
     return true;
@@ -622,7 +623,7 @@ public class ConsoleActivity extends Activity {
     case R.id.terminal_menu_send_email:
       doEmailTranscript();
       break;
-    case R.id.terminal_menu_exit_and_edit:
+    case R.id.terminal_menu_exit:
       TerminalView terminalView = (TerminalView) findCurrentView(R.id.console_flip);
       TerminalBridge bridge = terminalView.bridge;
       if (manager != null) {
@@ -634,10 +635,13 @@ public class ConsoleActivity extends Activity {
         startService(intent);
         Message.obtain(disconnectHandler, -1, bridge).sendToTarget();
       }
-      Intent intent = new Intent(Constants.ACTION_EDIT_SCRIPT);
-      ScriptProcess process = (ScriptProcess) bridge.getProcess();
-      intent.putExtra(Constants.EXTRA_SCRIPT_PATH, process.getPath());
-      startActivity(intent);
+      // Go back to editor if running a script
+      if (bridge.getProcess() instanceof ScriptProcess) {
+        Intent intent = new Intent(Constants.ACTION_EDIT_SCRIPT);
+        ScriptProcess process = (ScriptProcess) bridge.getProcess();
+        intent.putExtra(Constants.EXTRA_SCRIPT_PATH, process.getPath());
+        startActivity(intent);
+      }
       finish();
       break;
     }
@@ -937,6 +941,11 @@ public class ConsoleActivity extends Activity {
     // set the terminal overlay text
     TextView overlay = (TextView) view.findViewById(R.id.terminal_overlay);
     overlay.setText(bridge.getName());
+
+    // liam.greenhughes - Set title of screen to process name
+    ActionBar actionBar = getActionBar();
+    actionBar.setTitle(bridge.getProcess().getName());
+    actionBar.setSubtitle("Scripting Layer for Android r" + Version.getVersion(this));
 
     // and add our terminal view control, using index to place behind overlay
     TerminalView terminal = new TerminalView(ConsoleActivity.this, bridge);
