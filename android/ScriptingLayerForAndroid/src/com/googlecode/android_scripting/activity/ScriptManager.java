@@ -390,7 +390,7 @@ public class ScriptManager extends ListActivity {
       mAdapter.notifyDataSetInvalidated();
       return;
     }
-    if (FacadeConfiguration.getSdkLevel() <= 3 || !mPreferences.getBoolean("use_quick_menu", true)) {
+    if (FacadeConfiguration.getSdkLevel() <= 3 || !mPreferences.getBoolean("use_quick_menu", false)) {
       doDialogMenu();
       return;
     }

@@ -17,7 +17,6 @@
 package com.googlecode.android_scripting.activity;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -45,9 +44,6 @@ public class Preferences extends PreferenceActivity {
 
     // action bar back
     if (itemId == android.R.id.home) {
-      Intent intent = new Intent(this, ScriptManager.class);
-      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      startActivity(intent);
       finish();
     }
     return true;
