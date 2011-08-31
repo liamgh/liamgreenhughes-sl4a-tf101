@@ -16,6 +16,7 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -90,6 +91,9 @@ public class ApiBrowser extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     CustomizeWindow.requestCustomTitle(this, "API Browser", R.layout.api_browser);
+    // liam.greenhughes Add back button
+    ActionBar actionBar = getActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
     getListView().setFastScrollEnabled(true);
     mExpandedPositions = new HashSet<Integer>();
     updateAndFilterMethodDescriptors(null);
@@ -181,6 +185,9 @@ public class ApiBrowser extends ListActivity {
       mExpandedPositions.clear();
     } else if (itemId == MenuId.SEARCH.getId()) {
       onSearchRequested();
+    } else if (itemId == android.R.id.home) {
+      setResult(RESULT_CANCELED);
+      finish();
     }
 
     mAdapter.notifyDataSetInvalidated();
