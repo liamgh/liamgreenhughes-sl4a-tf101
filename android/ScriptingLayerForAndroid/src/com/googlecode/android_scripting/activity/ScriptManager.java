@@ -152,7 +152,6 @@ public class ScriptManager extends ListActivity {
 
   @SuppressWarnings("serial")
   private void updateAndFilterScriptList(final String query) {
-    Log.d("SL4A: updateAndFilterScriptList query \"" + query + "\"");
     List<File> scripts;
     if (mPreferences.getBoolean("show_all_files", false)) {
       scripts = ScriptStorageAdapter.listAllScripts(mCurrentDir);
