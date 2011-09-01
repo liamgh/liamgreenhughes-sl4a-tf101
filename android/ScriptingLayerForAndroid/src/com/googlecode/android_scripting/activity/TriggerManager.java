@@ -90,6 +90,7 @@ public class TriggerManager extends ListActivity {
     ActivityFlinger.attachView(getListView(), this);
     ActivityFlinger.attachView(getWindow().getDecorView(), this);
     Analytics.trackActivity(this);
+
   }
 
   @Override
@@ -110,9 +111,7 @@ public class TriggerManager extends ListActivity {
 
     // action bar back
     if (itemId == android.R.id.home) {
-      Intent intent = new Intent(this, ScriptManager.class);
-      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      startActivity(intent);
+      finish();
     } else if (itemId == MenuId.HELP.getId()) {
       Help.show(this);
     } else if (itemId == MenuId.PREFERENCES.getId()) {
