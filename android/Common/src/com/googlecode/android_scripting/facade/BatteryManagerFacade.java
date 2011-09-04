@@ -103,7 +103,6 @@ public class BatteryManagerFacade extends RpcReceiver {
             intent.getIntExtra(getBatteryManagerFieldValue("EXTRA_TEMPERATURE"), -1);
         mBatteryTechnology = intent.getStringExtra(getBatteryManagerFieldValue("EXTRA_TECHNOLOGY"));
         if (intent.getExtras().containsKey("dock_level")) {
-          Log.d("SL4A: DOCK FOUND!!!!!");
           mDockStatus = intent.getIntExtra("dock_status", 0);
           mDockLevel = intent.getIntExtra("dock_level", -1);
         }
