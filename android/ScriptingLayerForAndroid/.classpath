@@ -16,5 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="/Common/libs/guava-r06.jar"/>
 	<classpathentry kind="lib" path="libs/android-support-v4.jar"/>
 	<classpathentry kind="src" path="QuickAction_src"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
