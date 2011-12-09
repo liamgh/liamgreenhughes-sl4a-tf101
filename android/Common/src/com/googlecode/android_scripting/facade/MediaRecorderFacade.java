@@ -22,9 +22,9 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.SurfaceHolder;
-import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.view.SurfaceHolder.Callback;
 
 import com.googlecode.android_scripting.BaseApplication;
 import com.googlecode.android_scripting.FutureActivityTaskExecutor;
@@ -73,11 +73,12 @@ public class MediaRecorderFacade extends RpcReceiver {
   }
 
   @Rpc(description = "Records video from the camera and saves it to the given location. "
+      + "\nFile format can be *.mpg for default settings, *.mp4 or *.3gp for a more mobile friendly format. "
       + "\nDuration specifies the maximum duration of the recording session. "
       + "\nIf duration is 0 this method will return and the recording will only be stopped "
       + "\nwhen recorderStop is called or when a scripts exits. "
       + "\nOtherwise it will block for the time period equal to the duration argument."
-      + "\nvideoSize: 0=160x120, 1=320x240, 2=352x288, 3=640x480, 4=800x480.")
+      + "\nvideoSize: 0=160x120, 1=320x240, 2=352x288, 3=640x480, 4=800x480, 5=720x480, 6=720x576, 7=720p.")
   public void recorderStartVideo(@RpcParameter(name = "targetPath") String targetPath,
       @RpcParameter(name = "duration") @RpcDefault("0") Integer duration,
       @RpcParameter(name = "videoSize") @RpcDefault("1") Integer videoSize) throws Exception {
@@ -118,6 +119,21 @@ public class MediaRecorderFacade extends RpcReceiver {
       xSize = 800;
       ySize = 480;
       break;
+    case 5:
+      xSize = 720;
+      ySize = 480;
+      mMediaRecorder.setVideoEncodingBitRate(2621440); // 2.5 Mbit/s
+      break;
+    case 6:
+      xSize = 720;
+      ySize = 576;
+      mMediaRecorder.setVideoEncodingBitRate(2621440); // 2.5 Mbit/s
+      break;
+    case 7:
+      xSize = 1280;
+      ySize = 720;
+      mMediaRecorder.setVideoEncodingBitRate(3670016); // 3.5 MBit/s
+      break;
     default:
       xSize = 320;
       ySize = 240;
@@ -143,7 +159,7 @@ public class MediaRecorderFacade extends RpcReceiver {
       mMediaRecorder.setVideoSize(xSize, ySize);
       mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
     }
-
+    mMediaRecorder.setCaptureRate(30);
     mMediaRecorder.setOutputFile(file.getAbsolutePath());
     if (milliseconds > 0) {
       mMediaRecorder.setMaxDuration(milliseconds);

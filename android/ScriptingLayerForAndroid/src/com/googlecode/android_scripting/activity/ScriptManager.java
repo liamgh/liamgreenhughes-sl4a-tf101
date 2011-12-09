@@ -16,6 +16,7 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -29,11 +30,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -59,8 +61,8 @@ import com.googlecode.android_scripting.dialog.UsageTrackingConfirmation;
 import com.googlecode.android_scripting.facade.FacadeConfiguration;
 import com.googlecode.android_scripting.interpreter.Interpreter;
 import com.googlecode.android_scripting.interpreter.InterpreterConfiguration;
-import com.googlecode.android_scripting.interpreter.InterpreterConfiguration.ConfigurationObserver;
 import com.googlecode.android_scripting.interpreter.InterpreterConstants;
+import com.googlecode.android_scripting.interpreter.InterpreterConfiguration.ConfigurationObserver;
 
 import java.io.File;
 import java.util.Collections;
@@ -121,9 +123,9 @@ public class ScriptManager extends ListActivity {
             .setIcon(android.R.drawable.ic_dialog_alert).setPositiveButton("Ok", null).show();
       }
     } else {
-      new AlertDialog.Builder(this).setTitle("External Storage Unavilable")
-          .setMessage("Scripts will be unavailable as long as external storage is unavailable.")
-          .setIcon(android.R.drawable.ic_dialog_alert).setPositiveButton("Ok", null).show();
+      new AlertDialog.Builder(this).setTitle("External Storage Unavilable").setMessage(
+          "Scripts will be unavailable as long as external storage is unavailable.").setIcon(
+          android.R.drawable.ic_dialog_alert).setPositiveButton("Ok", null).show();
     }
 
     mCurrentDir = mBaseDir;
@@ -167,10 +169,17 @@ public class ScriptManager extends ListActivity {
 
     synchronized (mQuery) {
       if (!mQuery.equals(query)) {
+        ActionBar actionBar = getActionBar();
         if (query == null || query.equals(EMPTY)) {
-          ((TextView) findViewById(R.id.left_text)).setText("Scripts");
+          // clear query
+          actionBar.setDisplayHomeAsUpEnabled(false);
+          // Doesn't work on EEE Pad
+          // ((TextView) findViewById(R.id.left_text)).setText("Scripts");
         } else {
-          ((TextView) findViewById(R.id.left_text)).setText(query);
+          // do query
+          actionBar.setDisplayHomeAsUpEnabled(true);
+          // Doesn't work on EEE Pad
+          // ((TextView) findViewById(R.id.left_text)).setText(query);
         }
         mQuery = query;
       }
@@ -267,25 +276,35 @@ public class ScriptManager extends ListActivity {
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
+
+    super.onCreateOptionsMenu(menu);
     menu.clear();
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.script_manager_menu, menu);
+
     buildMenuIdMaps();
     buildAddMenu(menu);
     buildSwitchActivityMenu(menu);
-    menu.add(Menu.NONE, MenuId.SEARCH.getId(), Menu.NONE, "Search").setIcon(
-        R.drawable.ic_menu_search);
-    menu.add(Menu.NONE, MenuId.PREFERENCES.getId(), Menu.NONE, "Preferences").setIcon(
-        android.R.drawable.ic_menu_preferences);
-    menu.add(Menu.NONE, MenuId.REFRESH.getId(), Menu.NONE, "Refresh").setIcon(
-        R.drawable.ic_menu_refresh);
-    menu.add(Menu.NONE, MenuId.HELP.getId(), Menu.NONE, "Help").setIcon(
-        android.R.drawable.ic_menu_help);
+
+    // menu.add(Menu.NONE, MenuId.SEARCH.getId(), Menu.NONE, "Search").setIcon(
+    // R.drawable.ic_menu_search).setShowAsAction(
+    // MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    // menu.add(Menu.NONE, MenuId.REFRESH.getId(), Menu.NONE, "Refresh").setIcon(
+    // R.drawable.ic_menu_refresh).setShowAsAction(
+    // MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    // menu.add(Menu.NONE, MenuId.HELP.getId(), Menu.NONE, "Help").setIcon(
+    // android.R.drawable.ic_menu_help).setShowAsAction(
+    // MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    // menu.add(Menu.NONE, MenuId.PREFERENCES.getId(), Menu.NONE, "Preferences").setIcon(
+    // android.R.drawable.ic_menu_preferences).setShowAsAction(
+    // MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
     return true;
   }
 
   private void buildSwitchActivityMenu(Menu menu) {
-    Menu subMenu =
-        menu.addSubMenu(Menu.NONE, Menu.NONE, Menu.NONE, "View").setIcon(
-            android.R.drawable.ic_menu_more);
+    MenuItem subMenuItem = menu.findItem(R.id.sm_view);
+    Menu subMenu = subMenuItem.getSubMenu();
     subMenu.add(Menu.NONE, MenuId.INTERPRETER_MANAGER.getId(), Menu.NONE, "Interpreters");
     subMenu.add(Menu.NONE, MenuId.TRIGGER_MANAGER.getId(), Menu.NONE, "Triggers");
     subMenu.add(Menu.NONE, MenuId.LOGCAT_VIEWER.getId(), Menu.NONE, "Logcat");
@@ -308,9 +327,8 @@ public class ScriptManager extends ListActivity {
   }
 
   private void buildAddMenu(Menu menu) {
-    Menu addMenu =
-        menu.addSubMenu(Menu.NONE, Menu.NONE, Menu.NONE, "Add").setIcon(
-            android.R.drawable.ic_menu_add);
+    MenuItem addMenuItem = menu.findItem(R.id.sm_add);
+    Menu addMenu = addMenuItem.getSubMenu();
     addMenu.add(Menu.NONE, MenuId.FOLDER_ADD.getId(), Menu.NONE, "Folder");
     for (Entry<Integer, Interpreter> entry : mAddMenuIds.entrySet()) {
       addMenu.add(Menu.NONE, entry.getKey(), Menu.NONE, entry.getValue().getNiceName());
@@ -321,7 +339,8 @@ public class ScriptManager extends ListActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
-    if (itemId == MenuId.HELP.getId()) {
+
+    if (itemId == R.id.sm_help) {
       Help.show(this);
     } else if (itemId == MenuId.INTERPRETER_MANAGER.getId()) {
       // Show interpreter manger.
@@ -331,8 +350,8 @@ public class ScriptManager extends ListActivity {
       // Add a new script.
       Intent intent = new Intent(Constants.ACTION_EDIT_SCRIPT);
       Interpreter interpreter = mAddMenuIds.get(itemId);
-      intent.putExtra(Constants.EXTRA_SCRIPT_PATH,
-          new File(mCurrentDir.getPath(), interpreter.getExtension()).getPath());
+      intent.putExtra(Constants.EXTRA_SCRIPT_PATH, new File(mCurrentDir.getPath(), interpreter
+          .getExtension()).getPath());
       intent.putExtra(Constants.EXTRA_SCRIPT_CONTENT, interpreter.getContentTemplate());
       intent.putExtra(Constants.EXTRA_IS_NEW_SCRIPT, true);
       startActivity(intent);
@@ -344,17 +363,21 @@ public class ScriptManager extends ListActivity {
       startActivityForResult(intent, RequestCode.QRCODE_ADD.ordinal());
     } else if (itemId == MenuId.FOLDER_ADD.getId()) {
       addFolder();
-    } else if (itemId == MenuId.PREFERENCES.getId()) {
+    } else if (itemId == R.id.sm_preferences) {
       startActivity(new Intent(this, Preferences.class));
     } else if (itemId == MenuId.TRIGGER_MANAGER.getId()) {
       startActivity(new Intent(this, TriggerManager.class));
     } else if (itemId == MenuId.LOGCAT_VIEWER.getId()) {
       startActivity(new Intent(this, LogcatViewer.class));
-    } else if (itemId == MenuId.REFRESH.getId()) {
+    } else if (itemId == R.id.sm_refresh) {
       updateAndFilterScriptList(mQuery);
       mAdapter.notifyDataSetChanged();
-    } else if (itemId == MenuId.SEARCH.getId()) {
+    } else if (itemId == R.id.sm_search) {
       onSearchRequested();
+    } else if (itemId == android.R.id.home) {
+      // action bar back - clear search
+      updateAndFilterScriptList(EMPTY);
+      mAdapter.notifyDataSetChanged();
     }
     return true;
   }
@@ -368,7 +391,7 @@ public class ScriptManager extends ListActivity {
       mAdapter.notifyDataSetInvalidated();
       return;
     }
-    if (FacadeConfiguration.getSdkLevel() <= 3 || !mPreferences.getBoolean("use_quick_menu", true)) {
+    if (FacadeConfiguration.getSdkLevel() <= 3 || !mPreferences.getBoolean("use_quick_menu", false)) {
       doDialogMenu();
       return;
     }

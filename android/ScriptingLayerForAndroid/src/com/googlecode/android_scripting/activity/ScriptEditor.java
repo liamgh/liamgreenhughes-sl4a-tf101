@@ -35,6 +35,7 @@ import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -116,7 +117,7 @@ public class ScriptEditor extends Activity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.script_editor);
+    CustomizeWindow.requestCustomTitle(this, "Edit script", R.layout.script_editor);
     mNameText = (EditText) findViewById(R.id.script_editor_title);
     mContentText = (EditText) findViewById(R.id.script_editor_body);
     mHistory = new EditHistory();
@@ -166,7 +167,7 @@ public class ScriptEditor extends Activity implements OnClickListener {
   }
 
   private void updatePreferences() {
-    mContentText.setTextSize(readIntPref("editor_fontsize", 10, 30));
+    mContentText.setTextSize(readIntPref("editor_fontsize", 20, 30));
     mEnableAutoClose = mPreferences.getBoolean("enableAutoClose", true);
     mAutoIndent = mPreferences.getBoolean("editor_auto_indent", false);
     mContentText.setHorizontallyScrolling(mPreferences.getBoolean("editor_no_wrap", false));
@@ -175,25 +176,29 @@ public class ScriptEditor extends Activity implements OnClickListener {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    menu.add(0, MenuId.SAVE.getId(), 0, "Save & Exit").setIcon(android.R.drawable.ic_menu_save);
-    menu.add(0, MenuId.SAVE_AND_RUN.getId(), 0, "Save & Run").setIcon(
-        android.R.drawable.ic_media_play);
-    menu.add(0, MenuId.PREFERENCES.getId(), 0, "Preferences").setIcon(
-        android.R.drawable.ic_menu_preferences);
-    menu.add(0, MenuId.API_BROWSER.getId(), 0, "API Browser").setIcon(
-        android.R.drawable.ic_menu_info_details);
-    menu.add(0, MenuId.HELP.getId(), 0, "Help").setIcon(android.R.drawable.ic_menu_help);
-    menu.add(0, MenuId.SHARE.getId(), 0, "Share").setIcon(android.R.drawable.ic_menu_share);
-    menu.add(0, MenuId.GOTO.getId(), 0, "GoTo").setIcon(android.R.drawable.ic_menu_directions);
+    //menu.add(0, MenuId.SAVE.getId(), 0, "Save & Exit").setIcon(android.R.drawable.ic_menu_save);
+    //menu.add(0, MenuId.SAVE_AND_RUN.getId(), 0, "Save & Run").setIcon(
+    //    android.R.drawable.ic_media_play);
+    //menu.add(0, MenuId.PREFERENCES.getId(), 0, "Preferences").setIcon(
+    //    android.R.drawable.ic_menu_preferences);
+    //menu.add(0, MenuId.API_BROWSER.getId(), 0, "API Browser").setIcon(
+    //    android.R.drawable.ic_menu_info_details);
+    //menu.add(0, MenuId.HELP.getId(), 0, "Help").setIcon(android.R.drawable.ic_menu_help);
+    // TODO Add these new menu items
+    //menu.add(0, MenuId.SHARE.getId(), 0, "Share").setIcon(android.R.drawable.ic_menu_share);
+    //menu.add(0, MenuId.GOTO.getId(), 0, "GoTo").setIcon(android.R.drawable.ic_menu_directions);
+    
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.script_editor_menu, menu);
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == MenuId.SAVE.getId()) {
+    if (item.getItemId() == R.id.se_save) {
       save();
       finish();
-    } else if (item.getItemId() == MenuId.SAVE_AND_RUN.getId()) {
+    } else if (item.getItemId() == R.id.se_save_and_run) {
       save();
       Interpreter interpreter =
           mConfiguration.getInterpreterForScript(mNameText.getText().toString());
@@ -207,24 +212,24 @@ public class ScriptEditor extends Activity implements OnClickListener {
         Toast.makeText(this, "Can't run this type.", Toast.LENGTH_SHORT).show();
       }
       finish();
-    } else if (item.getItemId() == MenuId.PREFERENCES.getId()) {
+    } else if (item.getItemId() == R.id.se_preferences) {
       startActivity(new Intent(this, Preferences.class));
-    } else if (item.getItemId() == MenuId.API_BROWSER.getId()) {
+    } else if (item.getItemId() == R.id.se_api_browser) {
       Intent intent = new Intent(this, ApiBrowser.class);
       intent.putExtra(Constants.EXTRA_SCRIPT_PATH, mNameText.getText().toString());
-      intent.putExtra(Constants.EXTRA_INTERPRETER_NAME,
+      intent.putExtra(Constants.EXTRA_INTERPRETER_NAME, 
           mConfiguration.getInterpreterForScript(mNameText.getText().toString()).getName());
       intent.putExtra(Constants.EXTRA_SCRIPT_TEXT, mContentText.getText().toString());
       startActivityForResult(intent, RequestCode.RPC_HELP.ordinal());
-    } else if (item.getItemId() == MenuId.HELP.getId()) {
+    } else if (item.getItemId() == R.id.se_help) {
       Help.show(this);
-    } else if (item.getItemId() == MenuId.SHARE.getId()) {
+    } else if (item.getItemId() == R.id.se_share) {
       Intent intent = new Intent(Intent.ACTION_SEND);
       intent.putExtra(Intent.EXTRA_TEXT, mContentText.getText().toString());
       intent.putExtra(Intent.EXTRA_SUBJECT, "Share " + mNameText.getText().toString());
       intent.setType("text/plain");
       startActivity(Intent.createChooser(intent, "Send Script to:"));
-    } else if (item.getItemId() == MenuId.GOTO.getId()) {
+    } else if (item.getItemId() == R.id.se_goto) {
       showDialog(DIALOG_LINE);
     }
     return super.onOptionsItemSelected(item);

@@ -10,5 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SignalStrengthFacade"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TextToSpeechFacade"/>
 	<classpathentry kind="var" path="JDK/lib/tools.jar"/>
+	<classpathentry kind="var" path="JDK"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

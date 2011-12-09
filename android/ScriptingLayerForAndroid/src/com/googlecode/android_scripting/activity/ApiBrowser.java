@@ -16,6 +16,7 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -90,6 +91,9 @@ public class ApiBrowser extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     CustomizeWindow.requestCustomTitle(this, "API Browser", R.layout.api_browser);
+    // liam.greenhughes Add back button
+    ActionBar actionBar = getActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
     getListView().setFastScrollEnabled(true);
     mExpandedPositions = new HashSet<Integer>();
     updateAndFilterMethodDescriptors(null);
@@ -159,11 +163,13 @@ public class ApiBrowser extends ListActivity {
     super.onPrepareOptionsMenu(menu);
     menu.clear();
     menu.add(Menu.NONE, MenuId.EXPAND_ALL.getId(), Menu.NONE, "Expand All").setIcon(
-        android.R.drawable.ic_menu_add);
+        android.R.drawable.ic_menu_add).setShowAsAction(
+        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     menu.add(Menu.NONE, MenuId.COLLAPSE_ALL.getId(), Menu.NONE, "Collapse All").setIcon(
-        android.R.drawable.ic_menu_close_clear_cancel);
+        android.R.drawable.ic_menu_close_clear_cancel).setShowAsAction(
+        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     menu.add(Menu.NONE, MenuId.SEARCH.getId(), Menu.NONE, "Search").setIcon(
-        R.drawable.ic_menu_search);
+        R.drawable.ic_menu_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     return true;
   }
 
@@ -179,6 +185,9 @@ public class ApiBrowser extends ListActivity {
       mExpandedPositions.clear();
     } else if (itemId == MenuId.SEARCH.getId()) {
       onSearchRequested();
+    } else if (itemId == android.R.id.home) {
+      setResult(RESULT_CANCELED);
+      finish();
     }
 
     mAdapter.notifyDataSetInvalidated();
@@ -325,7 +334,7 @@ public class ApiBrowser extends ListActivity {
         view = (TextView) convertView;
       }
       view.setPadding(4, 4, 4, 4);
-      view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+      view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
       if (mExpandedPositions.contains(position)) {
         view.setText(mMethodDescriptors.get(position).getHelp());
       } else {

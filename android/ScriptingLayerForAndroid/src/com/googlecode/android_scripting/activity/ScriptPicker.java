@@ -16,6 +16,7 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -59,7 +60,9 @@ public class ScriptPicker extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    CustomizeWindow.requestCustomTitle(this, "Scripts", R.layout.script_manager);
+    ActionBar actionBar = getActionBar();
+    actionBar.setTitle("Please select a script:");
+    setContentView(R.layout.script_manager);
     mCurrentDir = mBaseDir;
     mConfiguration = ((BaseApplication) getApplication()).getInterpreterConfiguration();
     mScripts = ScriptStorageAdapter.listExecutableScripts(null, mConfiguration);
