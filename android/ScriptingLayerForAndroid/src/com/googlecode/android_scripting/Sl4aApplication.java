@@ -21,7 +21,7 @@ public class Sl4aApplication extends BaseApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    Analytics.start(this, "UA-158835-13");
+    Analytics.start(this, "UA-3072904-3");
   }
 
   @Override

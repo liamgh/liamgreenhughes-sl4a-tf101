@@ -16,6 +16,7 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -77,6 +78,9 @@ public class TriggerManager extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     CustomizeWindow.requestCustomTitle(this, "Triggers", R.layout.trigger_manager);
+    ActionBar actionBar = getActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
+
     ScriptTriggerListObserver observer = new ScriptTriggerListObserver();
     mAdapter = new ScriptTriggerAdapter();
     setListAdapter(mAdapter);
@@ -86,23 +90,29 @@ public class TriggerManager extends ListActivity {
     ActivityFlinger.attachView(getListView(), this);
     ActivityFlinger.attachView(getWindow().getDecorView(), this);
     Analytics.trackActivity(this);
+
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     menu.add(Menu.NONE, MenuId.ADD.getId(), Menu.NONE, "Add").setIcon(
-        android.R.drawable.ic_menu_add);
+        android.R.drawable.ic_menu_add).setShowAsAction(
+        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     menu.add(Menu.NONE, MenuId.PREFERENCES.getId(), Menu.NONE, "Preferences").setIcon(
-        android.R.drawable.ic_menu_preferences);
+        android.R.drawable.ic_menu_preferences).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     menu.add(Menu.NONE, MenuId.HELP.getId(), Menu.NONE, "Help").setIcon(
-        android.R.drawable.ic_menu_help);
+        android.R.drawable.ic_menu_help).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
-    if (itemId == MenuId.HELP.getId()) {
+
+    // action bar back
+    if (itemId == android.R.id.home) {
+      finish();
+    } else if (itemId == MenuId.HELP.getId()) {
       Help.show(this);
     } else if (itemId == MenuId.PREFERENCES.getId()) {
       startActivity(new Intent(this, Preferences.class));

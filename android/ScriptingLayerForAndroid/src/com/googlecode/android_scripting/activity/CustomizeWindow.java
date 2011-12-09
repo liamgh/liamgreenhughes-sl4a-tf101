@@ -16,27 +16,27 @@
 
 package com.googlecode.android_scripting.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.googlecode.android_scripting.R;
 import com.googlecode.android_scripting.Version;
 
 public class CustomizeWindow {
+
   private CustomizeWindow() {
     // Utility class.
   }
 
   public static void requestCustomTitle(Activity activity, String title, int contentViewLayoutResId) {
-    activity.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+    activity.requestWindowFeature(Window.FEATURE_ACTION_BAR);
     activity.setContentView(contentViewLayoutResId);
-    activity.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
-    ((TextView) activity.findViewById(R.id.left_text)).setText(title);
-    ((TextView) activity.findViewById(R.id.right_text)).setText("SL4A r"
-        + Version.getVersion(activity));
+    ActionBar actionBar = activity.getActionBar();
+    actionBar.setTitle(title);
+    actionBar.setSubtitle("Scripting Layer for Android r" + Version.getVersion(activity));
   }
 
   public static void toggleProgressBarVisibility(Activity activity, boolean on) {

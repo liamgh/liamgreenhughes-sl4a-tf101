@@ -16,21 +16,21 @@
 
 package com.googlecode.android_scripting.activity;
 
-import android.app.AlertDialog;
+// import android.app.AlertDialog;
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
+// import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+// import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
+// import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -62,7 +62,6 @@ public class InterpreterManager extends ListActivity {
   private List<Interpreter> mInterpreters;
   private List<String> mFeaturedInterpreters;
   private InterpreterConfiguration mConfiguration;
-  private SharedPreferences mPreferences;
 
   private static enum MenuId {
     HELP, ADD, NETWORK, PREFERENCES;
@@ -75,6 +74,8 @@ public class InterpreterManager extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     CustomizeWindow.requestCustomTitle(this, "Interpreters", R.layout.interpreter_manager);
+    ActionBar actionBar = getActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
     mConfiguration = ((BaseApplication) getApplication()).getInterpreterConfiguration();
     mInterpreters = new ArrayList<Interpreter>();
     mAdapter = new InterpreterManagerAdapter();
@@ -84,8 +85,10 @@ public class InterpreterManager extends ListActivity {
     ActivityFlinger.attachView(getListView(), this);
     ActivityFlinger.attachView(getWindow().getDecorView(), this);
     mFeaturedInterpreters = FeaturedInterpreters.getList();
-    mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    // mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     Analytics.trackActivity(this);
+    // force refresh to make sure list of interpreters shown
+    mAdapter.notifyDataSetChanged();
   }
 
   @Override
@@ -93,6 +96,8 @@ public class InterpreterManager extends ListActivity {
     super.onStart();
     mConfiguration.registerObserver(mObserver);
   }
+
+
 
   @Override
   protected void onResume() {
@@ -109,20 +114,26 @@ public class InterpreterManager extends ListActivity {
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     menu.clear();
+
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.interpreter_manager_menu, menu);
+
     buildInstallLanguagesMenu(menu);
-    menu.add(Menu.NONE, MenuId.NETWORK.getId(), Menu.NONE, "Start Server").setIcon(
-        android.R.drawable.ic_menu_share);
-    menu.add(Menu.NONE, MenuId.PREFERENCES.getId(), Menu.NONE, "Preferences").setIcon(
-        android.R.drawable.ic_menu_preferences);
-    menu.add(Menu.NONE, MenuId.HELP.getId(), Menu.NONE, "Help").setIcon(
-        android.R.drawable.ic_menu_help);
+    // menu.add(Menu.NONE, MenuId.NETWORK.getId(), Menu.NONE, "Start Server").setIcon(
+    //    android.R.drawable.ic_menu_share);
+    // menu.add(Menu.NONE, MenuId.PREFERENCES.getId(), Menu.NONE, "Preferences").setIcon(
+    //     android.R.drawable.ic_menu_preferences);
+    // menu.add(Menu.NONE, MenuId.HELP.getId(), Menu.NONE, "Help").setIcon(
+    //     android.R.drawable.ic_menu_help);
     return super.onPrepareOptionsMenu(menu);
   }
 
   private void buildInstallLanguagesMenu(Menu menu) {
-    SubMenu installMenu =
-        menu.addSubMenu(Menu.NONE, MenuId.ADD.getId(), Menu.NONE, "Add").setIcon(
-            android.R.drawable.ic_menu_add);
+    // SubMenu installMenu =
+    //    menu.addSubMenu(Menu.NONE, MenuId.ADD.getId(), Menu.NONE, "Add").setIcon(
+    //        android.R.drawable.ic_menu_add);
+    MenuItem installMenuItem = menu.findItem(R.id.im_add);
+    Menu installMenu = installMenuItem.getSubMenu();
     int i = MenuId.values().length + Menu.FIRST;
     for (String interpreterName : mFeaturedInterpreters) {
       installMenu.add(Menu.NONE, i++, Menu.NONE, interpreterName);
@@ -132,18 +143,18 @@ public class InterpreterManager extends ListActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
-    if (itemId == MenuId.HELP.getId()) {
+    // Note this menu changed for SL4ATR
+    if (itemId == android.R.id.home) {
+      Intent intent = new Intent(this, ScriptManager.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+    } else if (itemId == R.id.sm_help) {
       Help.show(this);
-    } else if (itemId == MenuId.NETWORK.getId()) {
-      AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-      dialog.setItems(new CharSequence[] { "Public", "Private" }, new OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-          launchService(which == 0 /* usePublicIp */);
-        }
-      });
-      dialog.show();
-    } else if (itemId == MenuId.PREFERENCES.getId()) {
+    } else if (itemId == R.id.im_start_server_public) {
+      launchService(true);
+    } else if (itemId == R.id.im_start_server_private) {
+      launchService(false);
+    } else if (itemId == R.id.sm_preferences) {
       startActivity(new Intent(this, Preferences.class));
     } else if (itemId >= MenuId.values().length + Menu.FIRST) {
       int i = itemId - MenuId.values().length - Menu.FIRST;
@@ -156,24 +167,10 @@ public class InterpreterManager extends ListActivity {
     return true;
   }
 
-  private int getPrefInt(String key, int defaultValue) {
-    int result = defaultValue;
-    String value = mPreferences.getString(key, null);
-    if (value != null) {
-      try {
-        result = Integer.parseInt(value);
-      } catch (NumberFormatException e) {
-        result = defaultValue;
-      }
-    }
-    return result;
-  }
-
   private void launchService(boolean usePublicIp) {
     Intent intent = new Intent(this, ScriptingLayerService.class);
     intent.setAction(Constants.ACTION_LAUNCH_SERVER);
     intent.putExtra(Constants.EXTRA_USE_EXTERNAL_IP, usePublicIp);
-    intent.putExtra(Constants.EXTRA_USE_SERVICE_PORT, getPrefInt("use_service_port", 0));
     startService(intent);
   }
 
@@ -254,7 +251,7 @@ public class InterpreterManager extends ListActivity {
       ImageView img = (ImageView) container.findViewById(R.id.list_item_icon);
 
       int imgId =
-          FeaturedInterpreters.getInterpreterIcon(InterpreterManager.this,
+          FeaturedInterpreters.getInterpreterIcon(InterpreterManager.this, 
               interpreter.getExtension());
       if (imgId == 0) {
         imgId = R.drawable.sl4a_logo_32;

@@ -104,6 +104,8 @@ public class Help {
 
   public static void show(final Activity activity) {
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+    builder.setIcon(R.drawable.sl4a_logo_32);
+    builder.setTitle(R.string.title_help);
     List<CharSequence> list = new ArrayList<CharSequence>();
     list.add("Wiki Documentation");
     list.add("YouTube Screencasts");
@@ -111,6 +113,7 @@ public class Help {
     if (checkApiHelp(activity)) {
       list.add("API Help");
     }
+    list.add("SL4A on greenhughes.com");
     CharSequence[] mylist = list.toArray(new CharSequence[list.size()]);
     builder.setItems(mylist, new DialogInterface.OnClickListener() {
       @Override
@@ -137,6 +140,13 @@ public class Help {
         }
         case 3: {
           showApiHelp(activity, "index.html");
+        }
+        case 4: {
+          Intent intent = new Intent();
+          intent.setAction(Intent.ACTION_VIEW);
+          intent.setData(Uri.parse(activity.getString(R.string.ghc_sl4a_url)));
+          activity.startActivity(intent);
+          break;
         }
         }
       }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+ <item android:id="@+id/se_save"
+          android:icon="@android:drawable/ic_menu_save"
+          android:title="Save &amp; Exit"
+          android:showAsAction="ifRoom|withText" />
+ <item android:id="@+id/se_save_and_run"
+          android:icon="@android:drawable/ic_media_play"
+          android:title="Save &amp; Run"
+          android:showAsAction="ifRoom|withText" />
+ <item android:id="@+id/se_api_browser"
+          android:icon="@android:drawable/ic_menu_info_details"
+          android:title="API Browser"
+          android:showAsAction="ifRoom|withText" />
+  <item android:id="@+id/se_preferences"
+          android:icon="@android:drawable/ic_menu_preferences"
+          android:title="Preferences"
+          android:showAsAction="ifRoom" />
+  <item android:id="@+id/se_help"
+          android:icon="@android:drawable/ic_menu_help"
+          android:title="Help"
+          android:showAsAction="ifRoom" />
+   <item android:id="@+id/se_share"
+          android:icon="@android:drawable/ic_menu_share"
+          android:title="Share"
+          android:showAsAction="ifRoom" />
+   <item android:id="@+id/se_goto"
+          android:icon="@android:drawable/ic_menu_directions"
+          android:title="GoTo"
+          android:showAsAction="ifRoom" />       
+</menu>

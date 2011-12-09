@@ -108,6 +108,7 @@ public class WebCamFacade extends RpcReceiver {
   private final EventFacade mEventFacade;
   private boolean mPreview;
   private File mDest;
+  private int mCameraId; // Added by liam.greenhughes - Camera Id in use
   
   private final PreviewCallback mPreviewCallback = new PreviewCallback() {
     @Override
@@ -167,6 +168,7 @@ public class WebCamFacade extends RpcReceiver {
     mService = manager.getService();
     mJpegDataReady = new CountDownLatch(1);
     mEventFacade = manager.getReceiver(EventFacade.class);
+    mCameraId = 0;
   }
 
   private byte[] compressYuvToJpeg(final byte[] yuvData) {
@@ -182,8 +184,17 @@ public class WebCamFacade extends RpcReceiver {
   public InetSocketAddress webcamStart(
       @RpcParameter(name = "resolutionLevel", description = "increasing this number provides higher resolution") @RpcDefault("0") Integer resolutionLevel,
       @RpcParameter(name = "jpegQuality", description = "a number from 0-100") @RpcDefault("20") Integer jpegQuality,
-      @RpcParameter(name = "port", description = "If port is specified, the webcam service will bind to port, otherwise it will pick any available port.") @RpcDefault("0") Integer port)
+      @RpcParameter(name = "port", description = "If port is specified, the webcam service will bind to port, otherwise it will pick any available port.") @RpcDefault("0") Integer port,
+      @RpcParameter(name = "cameraId", description = "Which camera to use. 0 is normally back and 1 front camera.") @RpcDefault("0") Integer cameraId)
       throws Exception {
+    // Check not trying to use a camera that does not exist
+    if (cameraId < 0 || cameraId >= Camera.getNumberOfCameras()) {
+      mCameraId = 0;
+      Log.d("CameraId requested does not exist. Using default camera.");
+    }
+    else {
+      mCameraId = cameraId;
+    }
     try {
       openCamera(resolutionLevel, jpegQuality);
       return startServer(port);
@@ -246,10 +257,11 @@ public class WebCamFacade extends RpcReceiver {
 
   private void openCamera(Integer resolutionLevel, Integer jpegQuality) throws IOException,
       InterruptedException {
-    mCamera = Camera.open();
+    mCamera = Camera.open(mCameraId);
     mParameters = mCamera.getParameters();
     mParameters.setPictureFormat(ImageFormat.JPEG);
-    mParameters.setPreviewFormat(ImageFormat.JPEG);
+    // liam.greenhughes Commented out this line as was causing a crash on the EEE Pad
+    //mParameters.setPreviewFormat(ImageFormat.JPEG);
     List<Size> supportedPreviewSizes = mParameters.getSupportedPreviewSizes();
     Collections.sort(supportedPreviewSizes, new Comparator<Size>() {
       @Override
@@ -336,8 +348,18 @@ public class WebCamFacade extends RpcReceiver {
   public boolean cameraStartPreview(
           @RpcParameter(name = "resolutionLevel", description = "increasing this number provides higher resolution") @RpcDefault("0") Integer resolutionLevel,
           @RpcParameter(name = "jpegQuality", description = "a number from 0-100") @RpcDefault("20") Integer jpegQuality,
-          @RpcParameter(name = "filepath", description = "Path to store jpeg files.") @RpcOptional String filepath)
+          @RpcParameter(name = "filepath", description = "Path to store jpeg files.") @RpcOptional String filepath,
+          @RpcParameter(name = "cameraId", description = "Which camera to use. 0 is normally back and 1 front camera.") @RpcDefault("0") Integer cameraId)
       throws InterruptedException {
+    // check camera is valid
+    if (cameraId < 0 || cameraId >= Camera.getNumberOfCameras()) {
+      mCameraId = 0;
+      Log.d("CameraId requested does not exist. Using default camera.");
+    }
+    else {
+      mCameraId = cameraId;
+    }
+    
     mDest=null;
     if (filepath!=null && (filepath.length()>0)) {
       mDest = new File(filepath);

@@ -65,7 +65,7 @@
   <string
     name="dialog_title_initialcommand_preference">Initial Command</string>
   <string
-    name="default_value_fontsize_preference">10</string>
+    name="default_value_fontsize_preference">20</string>
   <string
     name="default_value_color_preference">1</string>
   <string
@@ -185,5 +185,6 @@
   <string name="help_acks">SL4A uses <a href="http://code.google.com/p/connectbot/">ConnectBot</a> terminal.</string>
   <string name="help_intro">Please select a topic below for more information on a particular subject.</string>
   <string name="enable_auto_close">Enable Auto Close</string>
+  <string name="ghc_sl4a_url">http://www.greenhughes.com/category/tagskeywords/sl4a</string>
   
 </resources>

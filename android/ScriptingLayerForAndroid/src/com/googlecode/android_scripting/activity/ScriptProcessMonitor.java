@@ -164,10 +164,12 @@ public class ScriptProcessMonitor extends ListActivity {
   public boolean onPrepareOptionsMenu(Menu menu) {
     menu.clear();
     // TODO(damonkohler): How could mProcessList ever be null?
-    if (mProcessList != null && !mProcessList.isEmpty()) {
-      menu.add(Menu.NONE, 0, Menu.NONE, R.string.stop_all).setIcon(
-          android.R.drawable.ic_menu_close_clear_cancel);
-    }
+    // (liam.greenhughes) Commented out if section as was causing opts menu not to appear
+    // if (mProcessList != null && !mProcessList.isEmpty()) {
+    menu.add(Menu.NONE, 0, Menu.NONE, R.string.stop_all).setIcon(
+        android.R.drawable.ic_menu_close_clear_cancel).setShowAsAction(
+        MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    // }
     return super.onPrepareOptionsMenu(menu);
   }
 

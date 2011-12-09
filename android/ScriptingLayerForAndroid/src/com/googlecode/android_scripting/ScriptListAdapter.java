@@ -63,7 +63,10 @@ public abstract class ScriptListAdapter extends BaseAdapter {
     } else {
       container = (LinearLayout) convertView;
     }
+    if (container == null) {
+      Log.d("Warning container is null");
 
+    }
     ImageView icon = (ImageView) container.findViewById(R.id.list_item_icon);
     int resourceId;
     if (script.isDirectory()) {
@@ -73,6 +76,10 @@ public abstract class ScriptListAdapter extends BaseAdapter {
       if (resourceId == 0) {
         resourceId = R.drawable.sl4a_logo_32;
       }
+    }
+    if (icon == null) {
+      Log.d("Warning icon is null");
+
     }
     icon.setImageResource(resourceId);
 

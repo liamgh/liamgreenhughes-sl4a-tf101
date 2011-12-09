@@ -19,6 +19,7 @@ package com.googlecode.android_scripting;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -121,7 +122,8 @@ public abstract class SimpleServer {
     for (NetworkInterface netint : Collections.list(nets)) {
       Enumeration<InetAddress> addresses = netint.getInetAddresses();
       for (InetAddress address : Collections.list(addresses)) {
-        if (!address.getHostAddress().equals("127.0.0.1")) {
+        // (liam.greenhughes) Restrict to IPv4 as IPv6 lead to errors at the moment
+        if (address instanceof Inet4Address && !address.isLoopbackAddress()) {
           return address;
         }
       }
@@ -162,6 +164,7 @@ public abstract class SimpleServer {
     InetAddress address;
     try {
       address = getPublicInetAddress();
+
       mServer = new ServerSocket(port, 5 /* backlog */, address);
     } catch (Exception e) {
       Log.e("Failed to start server.", e);
