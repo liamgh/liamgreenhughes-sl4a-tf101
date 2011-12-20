@@ -27,5 +27,9 @@
    <item android:id="@+id/se_goto"
           android:icon="@android:drawable/ic_menu_directions"
           android:title="GoTo"
-          android:showAsAction="ifRoom" />       
+          android:showAsAction="ifRoom" /> 
+   <item android:id="@+id/se_search_replace"
+          android:icon="@android:drawable/ic_menu_search"
+          android:title="Search &amp; Replace"
+          android:showAsAction="ifRoom" />        
 </menu>
