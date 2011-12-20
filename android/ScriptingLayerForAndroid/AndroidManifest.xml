@@ -145,6 +145,7 @@
       android:name=".activity.FutureActivity"
       android:configChanges="keyboardHidden|orientation"
       android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+      <!-- Change above to Holo light to get an action bar  -->
     <activity
       android:name="org.connectbot.HelpActivity"
       android:configChanges="keyboardHidden|orientation"

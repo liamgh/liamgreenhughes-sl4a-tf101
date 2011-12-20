@@ -176,18 +176,18 @@ public class ScriptEditor extends Activity implements OnClickListener {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    //menu.add(0, MenuId.SAVE.getId(), 0, "Save & Exit").setIcon(android.R.drawable.ic_menu_save);
-    //menu.add(0, MenuId.SAVE_AND_RUN.getId(), 0, "Save & Run").setIcon(
-    //    android.R.drawable.ic_media_play);
-    //menu.add(0, MenuId.PREFERENCES.getId(), 0, "Preferences").setIcon(
-    //    android.R.drawable.ic_menu_preferences);
-    //menu.add(0, MenuId.API_BROWSER.getId(), 0, "API Browser").setIcon(
-    //    android.R.drawable.ic_menu_info_details);
-    //menu.add(0, MenuId.HELP.getId(), 0, "Help").setIcon(android.R.drawable.ic_menu_help);
+    // menu.add(0, MenuId.SAVE.getId(), 0, "Save & Exit").setIcon(android.R.drawable.ic_menu_save);
+    // menu.add(0, MenuId.SAVE_AND_RUN.getId(), 0, "Save & Run").setIcon(
+    // android.R.drawable.ic_media_play);
+    // menu.add(0, MenuId.PREFERENCES.getId(), 0, "Preferences").setIcon(
+    // android.R.drawable.ic_menu_preferences);
+    // menu.add(0, MenuId.API_BROWSER.getId(), 0, "API Browser").setIcon(
+    // android.R.drawable.ic_menu_info_details);
+    // menu.add(0, MenuId.HELP.getId(), 0, "Help").setIcon(android.R.drawable.ic_menu_help);
     // TODO Add these new menu items
-    //menu.add(0, MenuId.SHARE.getId(), 0, "Share").setIcon(android.R.drawable.ic_menu_share);
-    //menu.add(0, MenuId.GOTO.getId(), 0, "GoTo").setIcon(android.R.drawable.ic_menu_directions);
-    
+    // menu.add(0, MenuId.SHARE.getId(), 0, "Share").setIcon(android.R.drawable.ic_menu_share);
+    // menu.add(0, MenuId.GOTO.getId(), 0, "GoTo").setIcon(android.R.drawable.ic_menu_directions);
+
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.script_editor_menu, menu);
     return true;
@@ -217,7 +217,7 @@ public class ScriptEditor extends Activity implements OnClickListener {
     } else if (item.getItemId() == R.id.se_api_browser) {
       Intent intent = new Intent(this, ApiBrowser.class);
       intent.putExtra(Constants.EXTRA_SCRIPT_PATH, mNameText.getText().toString());
-      intent.putExtra(Constants.EXTRA_INTERPRETER_NAME, 
+      intent.putExtra(Constants.EXTRA_INTERPRETER_NAME,
           mConfiguration.getInterpreterForScript(mNameText.getText().toString()).getName());
       intent.putExtra(Constants.EXTRA_SCRIPT_TEXT, mContentText.getText().toString());
       startActivityForResult(intent, RequestCode.RPC_HELP.ordinal());
@@ -231,6 +231,8 @@ public class ScriptEditor extends Activity implements OnClickListener {
       startActivity(Intent.createChooser(intent, "Send Script to:"));
     } else if (item.getItemId() == R.id.se_goto) {
       showDialog(DIALOG_LINE);
+    } else if (item.getItemId() == R.id.se_search_replace) {
+      showDialog(DIALOG_FIND_REPLACE);
     }
     return super.onOptionsItemSelected(item);
   }
