@@ -7,5 +7,7 @@
 	<classpathentry kind="lib" path="libs/libGoogleAnalytics.jar"/>
 	<classpathentry kind="lib" path="libs/script.jar"/>
 	<classpathentry kind="lib" path="libs/guava-r06.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
